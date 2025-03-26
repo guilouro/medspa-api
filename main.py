@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from database import init_db
-
+from routes import medspa, services
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -18,6 +18,8 @@ app = FastAPI(
     lifespan=lifespan
 )
 
+app.include_router(medspa.router)
+app.include_router(services.router)
 
 @app.get("/")
 def read_root():
