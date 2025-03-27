@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from database import init_db
-from routes import medspa, services
+from routes import medspa, services, appointments
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -20,11 +20,4 @@ app = FastAPI(
 
 app.include_router(medspa.router)
 app.include_router(services.router)
-
-@app.get("/")
-def read_root():
-    return {
-        "message": "Welcome to the Medspa API",
-        "docs": "/docs",
-        "redoc": "/redoc"
-    } 
+app.include_router(appointments.router)

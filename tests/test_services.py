@@ -72,6 +72,26 @@ def test_get_service(client: TestClient, session: Session, setup_medspa: Medspa)
     assert response.json()["duration"] == service.duration
     assert response.json()["medspa_id"] == setup_medspa.id
 
+def test_get_services_filter_by_medspa_id(client: TestClient, session: Session, setup_medspa: Medspa):
+    service = Services(
+        name="Test Service",
+        description="Test Description",
+        price=100,
+        duration=30,
+        medspa_id=setup_medspa.id
+    )
+    services_repository.create(session, service)
+
+    response = client.get(f"/services?medspa_id={setup_medspa.id}")
+    assert response.status_code == 200
+    assert len(response.json()) == 1
+    assert response.json()[0]["name"] == service.name   
+
+    response = client.get(f"/services?medspa_id=999")
+    assert response.status_code == 200
+    assert len(response.json()) == 0
+
+
 def test_update_service(client: TestClient, session: Session, setup_medspa: Medspa):
     service = Services(
         name="Test Service",

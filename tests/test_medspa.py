@@ -36,9 +36,7 @@ def test_get_medspa(client: TestClient, session: Session):
         email_address="test@example.com"
     )
 
-    session.add(medspa)
-    session.commit()
-    session.refresh(medspa)
+    medspa_repository.create(session, medspa)
 
     response = client.get(f"/medspas/{medspa.id}")
     assert response.status_code == 200
@@ -57,9 +55,7 @@ def test_update_medspa(client: TestClient, session: Session):
         email_address="test@example.com"
     )
 
-    session.add(medspa)
-    session.commit()
-    session.refresh(medspa)
+    medspa_repository.create(session, medspa)
 
     updated_medspa_data = {
         "name": "Updated Medspa",
@@ -82,9 +78,7 @@ def test_delete_medspa(client: TestClient, session: Session):
         email_address="test@example.com"
     )
 
-    session.add(medspa)
-    session.commit()
-    session.refresh(medspa) 
+    medspa_repository.create(session, medspa)
 
     response = client.delete(f"/medspas/{medspa.id}")
     assert response.status_code == 204

@@ -15,8 +15,9 @@ services_repository = ServicesRepository()
 medspa_repository = MedspaRepository()
 
 @router.get("/")
-def read_services(session: SessionDep) -> list[Services]:
-    services = services_repository.get_all(session)
+def read_services(session: SessionDep, medspa_id: int | None = None) -> list[Services]:
+    filter = {"medspa_id": medspa_id} if medspa_id else {}
+    services = services_repository.get_all(session, **filter)
     return services
 
 @router.get("/{service_id}")

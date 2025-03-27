@@ -8,21 +8,42 @@ class BaseRepository(Generic[ModelType]):
     def __init__(self, model: Type[ModelType]):
         self.model = model
 
-    def get_all(self, session: Session) -> list[ModelType]:
+    def get_all(self, session: Session, **filters) -> list[ModelType]:
         query = select(self.model)
+
+        if filters:
+            for key, value in filters.items():
+                query = query.where(getattr(self.model, key) == value)
+
         return session.exec(query).all()
     
-    def get_by_id(self, session: Session, id: int) -> ModelType:
+    def get_by_id(self, session: Session, id: int, **filters) -> ModelType:
         query = select(self.model).where(self.model.id == id)
+        
+        if filters:
+            for key, value in filters.items():
+                query = query.where(getattr(self.model, key) == value)
+        
         item = session.exec(query).first()
+        
         if not item:
             raise HTTPException(status_code=404, detail=f"{self.model.__name__} not found")
+        
         return item
+    
+    def get_by_ids(self, session: Session, ids: list[int]) -> list[ModelType]:
+        query = select(self.model).where(self.model.id.in_(ids))
+        return session.exec(query).all()
     
     def create(self, session: Session, item: ModelType) -> ModelType:
         session.add(item)
         session.commit()
         session.refresh(item)
+        return item
+    
+    def create_and_flush(self, session: Session, item: ModelType) -> ModelType:
+        session.add(item)
+        session.flush()
         return item
 
     def update(self, session: Session, id: int, item: ModelType) -> ModelType:
