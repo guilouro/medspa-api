@@ -6,6 +6,7 @@ from main import app
 
 DATABASE_URL = "sqlite:///./test.db"
 
+
 @pytest.fixture(name="engine")
 def engine_fixture():
     engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
@@ -13,10 +14,12 @@ def engine_fixture():
     yield engine
     SQLModel.metadata.drop_all(engine)
 
+
 @pytest.fixture(name="session")
 def session_fixture(engine):
     with Session(engine) as session:
         yield session
+
 
 @pytest.fixture(name="client")
 def client_fixture(session):

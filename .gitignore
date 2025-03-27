@@ -51,3 +51,6 @@ coverage.xml
 .pytest_cache/
 
 *.db
+
+# Ruff
+.ruff_cache/

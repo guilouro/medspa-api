@@ -9,11 +9,13 @@ load_dotenv()
 DATABASE_URL = os.getenv("DATABASE_URL")
 engine = create_engine(DATABASE_URL)
 
+
 def init_db():
     """
     Initialize the database and create all tables
     """
     SQLModel.metadata.create_all(engine)
+
 
 def get_session():
     """

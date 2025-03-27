@@ -4,8 +4,11 @@ from enum import Enum
 from typing import List
 from sqlmodel import Field, Relationship, SQLModel
 
+
 class Base(SQLModel):
-    id: int | None = Field(default=None, primary_key=True, sa_column_kwargs={"autoincrement": True})
+    id: int | None = Field(
+        default=None, primary_key=True, sa_column_kwargs={"autoincrement": True}
+    )
     created_at: datetime.datetime = Field(default=datetime.datetime.now())
     updated_at: datetime.datetime = Field(default=datetime.datetime.now())
 
@@ -30,19 +33,23 @@ class Services(Base, table=True):
     medspa: Medspa = Relationship(back_populates="services")
     appointments: List["AppointmentsServices"] = Relationship(back_populates="service")
 
+
 class AppointmentStatus(Enum):
     SCHEDULED = "scheduled"
     COMPLETED = "completed"
     CANCELLED = "cancelled"
 
+
 class AppointmentCreate(SQLModel):
     medspa_id: int
     services: List[int]
 
+
 class AppointmentUpdate(SQLModel):
     medspa_id: int | None = None
-    status: AppointmentStatus | None = None 
+    status: AppointmentStatus | None = None
     services: List[int] | None = None
+
 
 class Appointments(Base, table=True):
     medspa_id: int = Field(foreign_key="medspa.id")
@@ -53,6 +60,7 @@ class Appointments(Base, table=True):
 
     medspa: Medspa = Relationship(back_populates="appointments")
     services: List["AppointmentsServices"] = Relationship(back_populates="appointment")
+
 
 class AppointmentsServices(Base, table=True):
     __tablename__ = "appointments_services"
