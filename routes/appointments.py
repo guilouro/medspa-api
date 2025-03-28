@@ -103,7 +103,8 @@ def update_appointment(
         appointment.total_duration = sum(service.duration for service in services)
 
         # Delete existing appointment-service relationships before creating new ones
-        # This ensures we don't have orphaned or duplicate relationships when updating services
+        # This ensures we don't have orphaned or duplicate relationships when
+        # updating services
         appointments_services_repository.delete_by_appointment_id(
             session, appointment_id
         )

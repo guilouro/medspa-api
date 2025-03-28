@@ -4,12 +4,12 @@ from sqlmodel import SQLModel, create_engine, Session
 from database import get_session
 from main import app
 
-DATABASE_URL = "sqlite:///./test.db"
-
 
 @pytest.fixture(name="engine")
 def engine_fixture():
-    engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+    engine = create_engine(
+        "sqlite:///./test.db", connect_args={"check_same_thread": False}
+    )
     SQLModel.metadata.create_all(engine)
     yield engine
     SQLModel.metadata.drop_all(engine)

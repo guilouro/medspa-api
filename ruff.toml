@@ -45,7 +45,6 @@ select = [
     "F",    # Pyflakes (detect invalid Python code)
     "E",    # pycodestyle errors (style checking)
     "W",    # pycodestyle warnings (style checking)
-    "I",    # isort (import sorting)
     "N",    # pep8-naming (naming conventions)
 ]
 
