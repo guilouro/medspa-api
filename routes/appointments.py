@@ -28,14 +28,14 @@ appointments_services_repository = AppointmentsServicesRepository()
 def get_appointments(
     session: SessionDep,
     status: AppointmentStatus | None = None,
-    start_date: datetime.date | None = None,
+    date: datetime.date | None = None,
 ) -> list[Appointments]:
     filter = {}
     if status:
         filter["status"] = status
 
-    if start_date:
-        filter["start_date"] = start_date
+    if date:
+        filter["date"] = date
 
     appointments = appointments_repository.get_all(session, **filter)
     return appointments

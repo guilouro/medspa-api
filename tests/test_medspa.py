@@ -16,7 +16,7 @@ def test_create_medspa(client: TestClient):
         "email_address": "test@example.com",
     }
 
-    response = client.post("/medspas/", json=medspa_data)
+    response = client.post("/v1/medspas/", json=medspa_data)
 
     assert response.status_code == 201
     assert response.json() == {
@@ -40,7 +40,7 @@ def test_get_medspa(client: TestClient, session: Session):
 
     medspa_repository.create(session, medspa)
 
-    response = client.get(f"/medspas/{medspa.id}")
+    response = client.get(f"/v1/medspas/{medspa.id}")
     assert response.status_code == 200
 
     assert response.json()["name"] == medspa.name
@@ -64,7 +64,7 @@ def test_update_medspa(client: TestClient, session: Session):
         "email_address": "updated@example.com",
     }
 
-    response = client.patch(f"/medspas/{medspa.id}", json=updated_medspa_data)
+    response = client.patch(f"/v1/medspas/{medspa.id}", json=updated_medspa_data)
     assert response.status_code == 200
 
     assert response.json()["name"] == updated_medspa_data["name"]
@@ -83,7 +83,7 @@ def test_delete_medspa(client: TestClient, session: Session):
 
     medspa_repository.create(session, medspa)
 
-    response = client.delete(f"/medspas/{medspa.id}")
+    response = client.delete(f"/v1/medspas/{medspa.id}")
     assert response.status_code == 204
 
     # Verify that the medspa is deleted

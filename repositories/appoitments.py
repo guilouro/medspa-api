@@ -23,7 +23,7 @@ class AppointmentsRepository(BaseRepository[Appointments]):
 
         if filters:
             for key, value in filters.items():
-                if key == "start_date":
+                if key == "date":
                     query = self.filter_date_query(value)
                 else:
                     query = query.where(getattr(self.model, key) == value)

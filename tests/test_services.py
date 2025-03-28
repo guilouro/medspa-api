@@ -31,7 +31,7 @@ def test_create_service(client: TestClient, session: Session, setup_medspa: Meds
         "medspa_id": setup_medspa.id,
     }
 
-    response = client.post("/services/", json=service_data)
+    response = client.post("/v1/services/", json=service_data)
     assert response.status_code == 201
 
     data = response.json()
@@ -50,7 +50,7 @@ def test_create_service_with_invalid_medspa_id(client: TestClient):
         "medspa_id": 999,
     }
 
-    response = client.post("/services/", json=service_data)
+    response = client.post("/v1/services/", json=service_data)
     assert response.status_code == 404
     assert response.json() == {"detail": "Medspa not found"}
 
@@ -67,7 +67,7 @@ def test_get_service(client: TestClient, session: Session, setup_medspa: Medspa)
     session.commit()
     session.refresh(service)
 
-    response = client.get(f"/services/{service.id}")
+    response = client.get(f"/v1/services/{service.id}")
 
     assert response.status_code == 200
     assert response.json()["name"] == service.name
@@ -89,12 +89,12 @@ def test_get_services_filter_by_medspa_id(
     )
     services_repository.create(session, service)
 
-    response = client.get(f"/services?medspa_id={setup_medspa.id}")
+    response = client.get(f"/v1/services?medspa_id={setup_medspa.id}")
     assert response.status_code == 200
     assert len(response.json()) == 1
     assert response.json()[0]["name"] == service.name
 
-    response = client.get("/services?medspa_id=999")
+    response = client.get("/v1/services?medspa_id=999")
     assert response.status_code == 200
     assert len(response.json()) == 0
 
@@ -115,7 +115,7 @@ def test_update_service(client: TestClient, session: Session, setup_medspa: Meds
         "name": "Updated Service",
     }
 
-    response = client.patch(f"/services/{service.id}", json=update_data)
+    response = client.patch(f"/v1/services/{service.id}", json=update_data)
     assert response.status_code == 200
     assert response.json()["name"] == update_data["name"]
     assert response.json()["duration"] == service.duration
@@ -133,7 +133,7 @@ def test_delete_service(client: TestClient, session: Session, setup_medspa: Meds
     session.commit()
     session.refresh(service)
 
-    response = client.delete(f"/services/{service.id}")
+    response = client.delete(f"/v1/services/{service.id}")
     assert response.status_code == 204
 
     # Verify that the service is deleted

@@ -60,7 +60,7 @@ def test_get_appointments(client: TestClient, session: Session, setup_medspa: Me
         ),
     )
 
-    response = client.get(f"/appointments/{appointment.id}")
+    response = client.get(f"/v1/appointments/{appointment.id}")
     assert response.status_code == 200
     assert response.json()["medspa_id"] == setup_medspa.id
     assert response.json()["start_time"] == start_time.isoformat()
@@ -88,12 +88,16 @@ def test_get_appointments_filter_by_status(
     )
     appointments_repository.create(session, appointment2)
 
-    response = client.get(f"/appointments?status={AppointmentStatus.SCHEDULED.value}")
+    response = client.get(
+        f"/v1/appointments?status={AppointmentStatus.SCHEDULED.value}"
+    )
     assert response.status_code == 200
     assert len(response.json()) == 1
     assert response.json()[0]["id"] == appointment1.id
 
-    response = client.get(f"/appointments?status={AppointmentStatus.CANCELLED.value}")
+    response = client.get(
+        f"/v1/appointments?status={AppointmentStatus.CANCELLED.value}"
+    )
     assert response.status_code == 200
     assert len(response.json()) == 1
     assert response.json()[0]["id"] == appointment2.id
@@ -120,7 +124,7 @@ def test_get_appointments_filter_by_date(
     )
     appointments_repository.create(session, appointment2)
 
-    response = client.get(f"/appointments?start_date={datetime.now().date()}")
+    response = client.get(f"/v1/appointments?date={datetime.now().date()}")
     assert response.status_code == 200
     assert len(response.json()) == 1
     assert response.json()[0]["id"] == appointment1.id
@@ -135,7 +139,7 @@ def test_create_appointment(
         "start_time": datetime.now().isoformat(),
     }
 
-    response = client.post("/appointments", json=appointment)
+    response = client.post("/v1/appointments", json=appointment)
     assert response.status_code == 201
     assert response.json()["medspa_id"] == setup_medspa.id
     assert response.json()["status"] == AppointmentStatus.SCHEDULED.value
@@ -168,7 +172,9 @@ def test_update_appointment_status(
         "services": [setup_service[0].id, service.id],
     }
 
-    response = client.patch(f"/appointments/{appointment.id}", json=updated_appointment)
+    response = client.patch(
+        f"/v1/appointments/{appointment.id}", json=updated_appointment
+    )
     assert response.status_code == 200
     assert response.json()["medspa_id"] == setup_medspa.id
     assert response.json()["status"] == "cancelled"
@@ -187,7 +193,7 @@ def test_delete_appointment(
     )
     appointments_repository.create(session, appointment)
 
-    response = client.delete(f"/appointments/{appointment.id}")
+    response = client.delete(f"/v1/appointments/{appointment.id}")
     assert response.status_code == 204
 
     # Test that the appointment is deleted
