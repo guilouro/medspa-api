@@ -30,7 +30,12 @@ def get_appointments(
     status: AppointmentStatus | None = None,
     start_date: datetime.date | None = None,
 ) -> list[Appointments]:
-    filter = {"status": status} if status else {}
+    filter = {}
+    if status:
+        filter["status"] = status
+
+    if start_date:
+        filter["start_date"] = start_date
 
     appointments = appointments_repository.get_all(session, **filter)
     return appointments
@@ -66,7 +71,7 @@ def create_appointment(booking: AppointmentCreate, session: SessionDep) -> Appoi
 
     appointment = Appointments(
         medspa_id=medspa.id,
-        start_time=datetime.datetime.now(),
+        start_time=booking.start_time,
         total_price=sum(service.price for service in services),
         total_duration=sum(service.duration for service in services),
         status=AppointmentStatus.SCHEDULED,

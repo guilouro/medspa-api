@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from fastapi import HTTPException
 from fastapi.testclient import TestClient
 from sqlmodel import Session
@@ -99,12 +99,40 @@ def test_get_appointments_filter_by_status(
     assert response.json()[0]["id"] == appointment2.id
 
 
+def test_get_appointments_filter_by_date(
+    client: TestClient, session: Session, setup_medspa: Medspa, setup_service: Services
+):
+    appointment1 = Appointments(
+        medspa_id=setup_medspa.id,
+        start_time=datetime.now(),
+        total_price=300,
+        total_duration=90,
+        status=AppointmentStatus.SCHEDULED,
+    )
+    appointments_repository.create(session, appointment1)
+
+    appointment2 = Appointments(
+        medspa_id=setup_medspa.id,
+        start_time=datetime.now() + timedelta(days=1),
+        total_price=300,
+        total_duration=90,
+        status=AppointmentStatus.SCHEDULED,
+    )
+    appointments_repository.create(session, appointment2)
+
+    response = client.get(f"/appointments?start_date={datetime.now().date()}")
+    assert response.status_code == 200
+    assert len(response.json()) == 1
+    assert response.json()[0]["id"] == appointment1.id
+
+
 def test_create_appointment(
     client: TestClient, session: Session, setup_medspa: Medspa, setup_service: Services
 ):
     appointment = {
         "medspa_id": setup_medspa.id,
         "services": [setup_service[0].id, setup_service[1].id],
+        "start_time": datetime.now().isoformat(),
     }
 
     response = client.post("/appointments", json=appointment)

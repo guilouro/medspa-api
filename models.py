@@ -19,8 +19,12 @@ class Medspa(Base, table=True):
     phone_number: str
     email_address: str
 
-    services: List["Services"] = Relationship(back_populates="medspa")
-    appointments: List["Appointments"] = Relationship(back_populates="medspa")
+    services: List["Services"] = Relationship(
+        back_populates="medspa", cascade_delete=True
+    )
+    appointments: List["Appointments"] = Relationship(
+        back_populates="medspa", cascade_delete=True
+    )
 
 
 class Services(Base, table=True):
@@ -29,9 +33,10 @@ class Services(Base, table=True):
     description: str
     price: Decimal = Field(max_digits=10, decimal_places=2)
     duration: int
-
     medspa: Medspa = Relationship(back_populates="services")
-    appointments: List["AppointmentsServices"] = Relationship(back_populates="service")
+    appointments: List["AppointmentsServices"] = Relationship(
+        back_populates="service", cascade_delete=True
+    )
 
 
 class AppointmentStatus(Enum):
@@ -42,6 +47,7 @@ class AppointmentStatus(Enum):
 
 class AppointmentCreate(SQLModel):
     medspa_id: int
+    start_time: datetime.datetime
     services: List[int]
 
 
@@ -59,7 +65,9 @@ class Appointments(Base, table=True):
     status: AppointmentStatus = Field(default=AppointmentStatus.SCHEDULED)
 
     medspa: Medspa = Relationship(back_populates="appointments")
-    services: List["AppointmentsServices"] = Relationship(back_populates="appointment")
+    services: List["AppointmentsServices"] = Relationship(
+        back_populates="appointment", cascade_delete=True
+    )
 
 
 class AppointmentsServices(Base, table=True):
