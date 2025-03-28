@@ -7,8 +7,10 @@ from routes import medspa, services, appointments
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # NOTE: This is a simplified database initialization approach used only for prototyping.
-    # For production environments, you should implement a proper database migration management
+    # NOTE: This is a simplified database initialization
+    # approach used only for prototyping.
+    # For production environments, you should implement a
+    # proper database migration management
     init_db()
     yield
 
